@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Overview · CS F214 A1</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site"><div class="wrap"><strong>CS F214 · Assignment 1</strong><nav><a href="index.html" aria-current="page">Overview</a><a href="algorithms.html">Algorithms</a><a href="results.html">Results</a><a href="analysis.html">Analysis</a><a href="lean.html">Lean (Part B)</a></nav></div></header>
+<main class="wrap">
+<h1>Propositional-logic parse trees</h1>
+<p class="lead">Part A stores a formula as a binary parse tree and runs the course algorithms on it (infix → prefix → tree, traversals, height, evaluation, truth tables) in C++17. Part B proves sequents in Lean 4. This report documents the algorithms, the measurements and what they show.</p>
+<div class="stats">
+<div class="stat"><b>597</b><span>measurements, all functions, 3 data families</span></div>
+<div class="stat"><b>~174500</b><span>levels: where recursive in-order overflows an 8 MB stack</span></div>
+<div class="stat"><b>0.96–1.10</b><span>log-log slope of T1–T4 and evaluation, 1k → 1M nodes</span></div>
+<div class="stat"><b>218 ms</b><span>truth table, 100-node formula, k = 17 atoms</span></div></div>
+<div class="cards">
+<a class="card" href="algorithms.html"><b>Algorithms</b><span>each task with a worked trace of ((p+(~q))&gt;r)</span></a>
+<a class="card" href="results.html"><b>Results</b><span>tables and plots from results.csv</span></a>
+<a class="card" href="analysis.html"><b>Analysis</b><span>time, recursion vs iteration, shape, 2<sup>k</sup>, memory</span></a>
+<a class="card" href="lean.html"><b>Lean (Part B)</b><span>proofs and the rule → tactic map</span></a></div>
+<h2>Team</h2>
+<p>Replace with the group members (names and BITS IDs) before submitting — see <code>README.md</code>.</p>
+<h2>Build and run</h2>
+<pre><code>make              # ./logic_a1, g++ -std=c++17 -Wall -Wextra -O2, zero warnings
+make test         # golden files A–I, invariants, error paths, DIMACS, 100k-deep trees, 1000 random formulas
+make bench        # writes bench/results.csv (needs data/*.cnf for the SAT rows)
+make docs         # Doxygen: docs/html/index.html
+
+./logic_a1 --formula "((p+(~q))>r)" --table
+./logic_a1 --formula "(p&gt;q&gt;r)" --task 3
+./logic_a1 --cnf data/ca002.shuffled.cnf --shape balanced --task 4</code></pre>
+<p>Connectives: <code>~</code> not, <code>*</code> and, <code>+</code> or, <code>&gt;</code> implies. Precedence <code>~ &gt; * &gt; + &gt; &gt;</code>; <code>&gt;</code> is right-associative, so <code>p&gt;q&gt;r</code> means <code>p&gt;(q&gt;r)</code>.</p>
+<h2>Measurement setup</h2>
+<p>13th Gen Intel(R) Core(TM) i7-1355U; g++ (GCC) 16.2.1 20260810; Linux; <code>-O2</code>. Timings are the median of 5 runs of <code>std::chrono::steady_clock</code>. The thread stack limit was 8192 kB.</p>
+</main>
+<div class="wrap"><footer>CS F214 Logic in CS, BITS Pilani Hyderabad · all numbers on these pages come from <code>bench/results.csv</code> (<a href="../../bench/results.csv">open</a>) and the Lean files in <code>lean/</code>.</footer></div>
+</body></html>

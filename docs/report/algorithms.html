@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Algorithms · CS F214 A1</title><link rel="stylesheet" href="style.css"></head>
+<body><header class="site"><div class="wrap"><strong>CS F214 · Assignment 1</strong><nav><a href="index.html">Overview</a><a href="algorithms.html" aria-current="page">Algorithms</a><a href="results.html">Results</a><a href="analysis.html">Analysis</a><a href="lean.html">Lean (Part B)</a></nav></div></header>
+<main class="wrap">
+<h1>Algorithms</h1>
+<p class="lead">Worked example (case A of the test suite): <code>((p+(~q))&gt;r)</code>. Every trace below was produced by simulating the same steps as the C++ code and checked against the golden file.</p>
+
+<h2>T1 · Infix → prefix <small class="muted">(src/tokenizer.cpp, src/infix_prefix.cpp)</small></h2>
+<p>Work on <em>tokens</em>, never characters: reversing characters would turn <code>x12</code> into <code>21x</code>. Steps: tokenize; reverse the list; swap <code>(</code> and <code>)</code>; run infix → postfix with an operator stack; reverse the result.</p>
+<p>Tokens: <code>( ( p + ( ~ q ) ) > r )</code>. Reversed and swapped: <code>( r > ( ( q ~ ) + p ) )</code>.</p>
+<div class="tablewrap"><table class="left"><thead><tr><th scope="col">token</th><th scope="col">action</th><th scope="col">operator stack (bottom → top)</th><th scope="col">output</th></tr></thead><tbody><tr><td>(</td><td>push &quot;(&quot;</td><td>(</td><td>·</td></tr><tr><td>r</td><td>atom → output</td><td>(</td><td>r</td></tr><tr><td>&gt;</td><td>pop while top ≥ prec(&gt;), then push</td><td>( &gt;</td><td>r</td></tr><tr><td>(</td><td>push &quot;(&quot;</td><td>( &gt; (</td><td>r</td></tr><tr><td>(</td><td>push &quot;(&quot;</td><td>( &gt; ( (</td><td>r</td></tr><tr><td>q</td><td>atom → output</td><td>( &gt; ( (</td><td>r q</td></tr><tr><td>~</td><td>pop while top ≥ prec(~), then push</td><td>( &gt; ( ( ~</td><td>r q</td></tr><tr><td>)</td><td>pop to output until &quot;(&quot;</td><td>( &gt; (</td><td>r q ~</td></tr><tr><td>+</td><td>pop while top &gt; prec(+), then push</td><td>( &gt; ( +</td><td>r q ~</td></tr><tr><td>p</td><td>atom → output</td><td>( &gt; ( +</td><td>r q ~ p</td></tr><tr><td>)</td><td>pop to output until &quot;(&quot;</td><td>( &gt;</td><td>r q ~ p +</td></tr><tr><td>)</td><td>pop to output until &quot;(&quot;</td><td>·</td><td>r q ~ p + &gt;</td></tr><tr><td>end</td><td>pop everything</td><td>·</td><td>r q ~ p + &gt;</td></tr></tbody></table></div>
+<p>Reversing the output gives the prefix expression <code>> + p ~ q r</code>.</p>
+<div class="callout"><b>Why the pop rule is ≥ for <code>&gt;</code> and strict &gt; for <code>*</code>, <code>+</code>.</b> The string is read backwards, so associativity flips. <code>p&gt;q&gt;r</code> reads <code>r&gt;q&gt;p</code>; on meeting the second <code>&gt;</code> the first one must already be emitted (pop on equal precedence), giving <code>r q &gt; p &gt;</code>, which reverses to <code>&gt; p &gt; q r</code> = <code>p&gt;(q&gt;r)</code>. Popping only on strictly greater would give <code>&gt; &gt; p q r</code>, the wrong left-associative parse. For <code>+</code> and <code>*</code>, which are left-associative, equal precedence must <em>not</em> pop. A separate state machine rejects malformed input (<code>p q</code>, <code>p+</code>, unbalanced parentheses) with a clear message before conversion.</div>
+<p>Complexity: O(n) time, O(n) space — each token is pushed and popped at most once.</p>
+
+<h2>T2 · Prefix → parse tree <small class="muted">(src/tree_build.cpp)</small></h2>
+<p>Scan the prefix tokens <strong>right to left</strong> with a stack of subtrees. An atom pushes a leaf. <code>~</code> pops one subtree and stores it in <code>right</code> (the NOT node's <code>left</code> stays null, so in-order prints <code>~</code> before its operand with no special case). A binary operator pops twice: the first pop was pushed last, i.e. is the <em>left</em> operand. Exactly one subtree must remain.</p>
+<div class="tablewrap"><table class="left"><thead><tr><th scope="col">token</th><th scope="col">action</th><th scope="col">stack (subtrees)</th></tr></thead><tbody><tr><td>r</td><td>atom → push leaf</td><td>r</td></tr><tr><td>q</td><td>atom → push leaf</td><td>r │ q</td></tr><tr><td>~</td><td>NOT: pop 1 → right</td><td>r │ ~(q)</td></tr><tr><td>p</td><td>atom → push leaf</td><td>r │ ~(q) │ p</td></tr><tr><td>+</td><td>binary: 1st pop → left, 2nd → right</td><td>r │ +(p, ~(q))</td></tr><tr><td>&gt;</td><td>binary: 1st pop → left, 2nd → right</td><td>&gt;(+(p, ~(q)), r)</td></tr></tbody></table></div>
+<p><code>freeTree</code> is iterative (explicit stack): a recursive delete would overflow the call stack on a left-deep CNF tree. Malformed prefix input frees everything built so far and throws. Complexity: O(n) time, O(n) space.</p>
+
+<h2>T3 · Traversals <small class="muted">(src/traversal.cpp)</small></h2>
+<table class="left"><thead><tr><th>order</th><th>output for case A</th><th>iterative method</th></tr></thead><tbody>
+<tr><td>in-order</td><td><code>((p+(~q))&gt;r)</code></td><td>stack of (node, state) frames</td></tr>
+<tr><td>pre-order</td><td><code>&gt; + p ~ q r</code></td><td>stack: pop+visit, push right, push left</td></tr>
+<tr><td>post-order</td><td><code>p q ~ + r &gt;</code></td><td>one stack and a last-visited pointer</td></tr></tbody></table>
+<p>The recursive versions append to one shared output buffer; returning and concatenating strings at every level would be O(n·h). In-order cannot be the textbook "push left chain" loop: parentheses must be printed before the left subtree and after the right, and a NOT node has no left child. So each frame carries a state: <strong>OPEN</strong> prints <code>(</code> and schedules the left subtree, <strong>MIDDLE</strong> prints the operator and schedules the right subtree, <strong>CLOSE</strong> prints <code>)</code>. Post-order needs the last-visited pointer to tell "coming back from the right subtree" from "not been there yet"; this keeps the stack at O(h) where the two-stack variant needs O(n).</p>
+<div class="tablewrap"><table class="left"><thead><tr><th scope="col">frame processed</th><th scope="col">output so far</th><th scope="col">stack (node:state, bottom → top)</th></tr></thead><tbody><tr><td>OPEN &gt;: emit &quot;(&quot;, push MIDDLE, push left +</td><td>(</td><td>&gt;:M +:O</td></tr><tr><td>OPEN +: emit &quot;(&quot;, push MIDDLE, push left p</td><td>((</td><td>&gt;:M +:M p:O</td></tr><tr><td>OPEN atom p: emit</td><td>((p</td><td>&gt;:M +:M</td></tr><tr><td>MIDDLE +: emit it, push CLOSE, push right ~</td><td>((p+</td><td>&gt;:M +:C ~:O</td></tr><tr><td>OPEN ~: emit &quot;(&quot;, push MIDDLE</td><td>((p+(</td><td>&gt;:M +:C ~:M</td></tr><tr><td>MIDDLE ~: emit it, push CLOSE, push right q</td><td>((p+(~</td><td>&gt;:M +:C ~:C q:O</td></tr><tr><td>OPEN atom q: emit</td><td>((p+(~q</td><td>&gt;:M +:C ~:C</td></tr><tr><td>CLOSE ~: emit &quot;)&quot;</td><td>((p+(~q)</td><td>&gt;:M +:C</td></tr><tr><td>CLOSE +: emit &quot;)&quot;</td><td>((p+(~q))</td><td>&gt;:M</td></tr><tr><td>MIDDLE &gt;: emit it, push CLOSE, push right r</td><td>((p+(~q))&gt;</td><td>&gt;:C r:O</td></tr><tr><td>OPEN atom r: emit</td><td>((p+(~q))&gt;r</td><td>&gt;:C</td></tr><tr><td>CLOSE &gt;: emit &quot;)&quot;</td><td>((p+(~q))&gt;r)</td><td>·</td></tr></tbody></table></div>
+<p>Complexity of every traversal: O(n) time; recursive O(h) call stack, iterative O(h) heap stack.</p>
+
+<h2>T4 · Height <small class="muted">(src/height.cpp)</small></h2>
+<p>Convention: <code>height(null) = -1</code>, <code>height(leaf) = 0</code>. Recursive: <code>1 + max(left, right)</code>. Iterative: level-order BFS with <code>std::queue</code>; the number of levels minus one is the height. For case A the levels have widths 1, 2, 2, 1 → 4 levels → height 3. Time O(n); space O(h) call stack (recursive) or O(w) queue, w = widest level (iterative).</p>
+
+<h2>T5 · Evaluation and truth table <small class="muted">(src/eval.cpp)</small></h2>
+<p><code>evaluateRec</code> is a post-order recursion; <code>evaluateIter</code> is the same post-order walk with a value stack (the right operand is the top of the stack when an operator is reached). <code>a &gt; b</code> is <code>(!a) || b</code>. Both children are always evaluated, so a missing atom is reported wherever it sits. <code>collectAtoms</code> returns the distinct atoms in <em>natural order</em> (<code>x2</code> before <code>x10</code>). The truth table has 2<sup>k</sup> rows; row i gives atom j the bit <code>(i &gt;&gt; (k-1-j)) &amp; 1</code>, so the first atom is the most significant bit and row 0 is all-false. Above 20 atoms the table is refused with an explanation (see Analysis).</p>
+<pre><code>p q r | F
+0 0 0 | 0
+0 0 1 | 1
+0 1 0 | 1
+0 1 1 | 1
+1 0 0 | 0
+1 0 1 | 1
+1 1 0 | 0
+1 1 1 | 1      column: 01110101</code></pre>
+
+<h2>DIMACS input <small class="muted">(src/cnf_reader.cpp)</small></h2>
+<p><code>readDimacs</code> skips <code>c</code> lines, stops at <code>%</code>, accepts clauses spanning lines or sharing a line, and warns (without failing) when the clause count differs from the header. <code>cnfToInfix</code> writes literal <code>k</code> as <code>xk</code> and <code>-k</code> as <code>(~xk)</code>, each clause as a left-deep disjunction, and the clauses as a conjunction that is either <strong>LEFT_DEEP</strong> (height Θ(clauses), the stress case) or <strong>BALANCED</strong> (midpoint split, height ≈ log₂(clauses) + clause depth).</p>
+</main>
+<div class="wrap"><footer>CS F214 Logic in CS, BITS Pilani Hyderabad · all numbers on these pages come from <code>bench/results.csv</code> (<a href="../../bench/results.csv">open</a>) and the Lean files in <code>lean/</code>.</footer></div>
+</body></html>
