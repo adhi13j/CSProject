@@ -66,8 +66,8 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 
 ## Phase 5 — Lean, Part B (E leads from Tue; everyone practices Thu)
 
-- [x] **5.1** (E) Set up Lean: open `lean/Examples.lean` in VS Code and confirm the Infoview shows goals.
-- [x] **5.2** (E) Copy Examples 1.13–1.18 **exactly** from the textbook into theorem stubs ending in `sorry`. Have a second person verify each statement against the book.
+- [ ] **5.1** (E) Set up Lean: open `lean/Examples.lean` in VS Code and confirm the Infoview shows goals.
+- [ ] **5.2** (E) Copy Examples 1.13–1.18 **exactly** from the textbook into theorem stubs ending in `sorry`. Have a second person verify each statement against the book.
 - [x] **5.3** (E) Prove each one. Mark which ones need `Classical`, and comment each step with its natural-deduction rule.
   *Accept:* the file compiles; `grep sorry lean/Examples.lean` returns nothing.
 - [x] **5.4** (E) `lean/RULES.md` — the rule → tactic cheat sheet (SPEC §10).
@@ -86,4 +86,7 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 
 | Date | Who | Note |
 |---|---|---|
+| 2026-10-12 | Claude | 5.2 NOT done: Ex 1.13–1.18 in `lean/Examples.lean` are self-made sequents (SPEC §12.5), not verified against the printed textbook. Compare each one and edit the statement only if it differs. |
+| 2026-10-12 | Claude | 5.1 NOT done: needs a person to open the file in VS Code and confirm the Infoview shows goals. |
+| 2026-10-12 | Claude | 0.1/0.2 are manual. `make docs` needs `doxygen` installed (verified with a scratchpad copy: 0 warnings). |
 | | | |
