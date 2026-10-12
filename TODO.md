@@ -66,11 +66,11 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 
 ## Phase 5 — Lean, Part B (E leads from Tue; everyone practices Thu)
 
-- [ ] **5.1** (E) Set up Lean: open `lean/Examples.lean` in VS Code and confirm the Infoview shows goals.
-- [ ] **5.2** (E) Copy Examples 1.13–1.18 **exactly** from the textbook into theorem stubs ending in `sorry`. Have a second person verify each statement against the book.
-- [ ] **5.3** (E) Prove each one. Mark which ones need `Classical`, and comment each step with its natural-deduction rule.
+- [x] **5.1** (E) Set up Lean: open `lean/Examples.lean` in VS Code and confirm the Infoview shows goals.
+- [x] **5.2** (E) Copy Examples 1.13–1.18 **exactly** from the textbook into theorem stubs ending in `sorry`. Have a second person verify each statement against the book.
+- [x] **5.3** (E) Prove each one. Mark which ones need `Classical`, and comment each step with its natural-deduction rule.
   *Accept:* the file compiles; `grep sorry lean/Examples.lean` returns nothing.
-- [ ] **5.4** (E) `lean/RULES.md` — the rule → tactic cheat sheet (SPEC §10).
+- [x] **5.4** (E) `lean/RULES.md` — the rule → tactic cheat sheet (SPEC §10).
 - [ ] **5.5** (everyone) Each member proves ≥3 sequents in `lean/Practice.lean` **without help**, for the 7-mark live demo. Suggested: ¬¬p ⊢ p, p→q ⊢ ¬q→¬p, ⊢ p∨¬p, p∧q→r ⊢ p→(q→r), (p∨q)∧(p∨r) ⊢ p∨(q∧r).
 
 ## Phase 6 — Submit and demo (Thu)
