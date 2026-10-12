@@ -1,0 +1,7 @@
+*.o
+logic_a1
+tests/run_tests
+bench/bench
+docs/html/
+.lake/
+data/*.cnf
