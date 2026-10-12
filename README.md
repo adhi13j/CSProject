@@ -31,6 +31,7 @@ make            # builds ./logic_a1   (g++ -std=c++17 -Wall -Wextra -O2, zero wa
 make test       # builds and runs tests/run_tests; non-zero exit on any failure
 make bench      # builds bench/bench and bench/crash_search, writes bench/results.csv
 make docs       # doxygen docs/Doxyfile  ->  docs/html/index.html
+make dist BITSID=<your BITS ID>   # builds <BITSID>_LOGIC_A1.zip (SPEC section 11)
 make clean
 ```
 

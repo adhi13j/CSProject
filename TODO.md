@@ -75,7 +75,7 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 
 ## Phase 6 — Submit and demo (Thu)
 
-- [ ] **6.1** Fresh clone into an empty folder → `make && make test && make docs` must all pass.
+- [x] **6.1** Fresh clone into an empty folder → `make && make test && make docs` must all pass.
 - [ ] **6.2** Build the zip per SPEC §11, named `<BITSID>_LOGIC_A1.zip`, then unzip it and rebuild once to confirm.
 - [ ] **6.3** Upload to LMS (one person) and confirm the upload in the group chat.
 - [ ] **6.4** Demo rehearsal: every member can (a) trace case A by hand through T1→T5, (b) explain recursive vs iterative stack use, (c) explain why the truth table is infeasible for SAT files, and (d) do one live Lean proof.
@@ -89,4 +89,5 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 | 2026-10-12 | Claude | 5.2 NOT done: Ex 1.13–1.18 in `lean/Examples.lean` are self-made sequents (SPEC §12.5), not verified against the printed textbook. Compare each one and edit the statement only if it differs. |
 | 2026-10-12 | Claude | 5.1 NOT done: needs a person to open the file in VS Code and confirm the Infoview shows goals. |
 | 2026-10-12 | Claude | 0.1/0.2 are manual. `make docs` needs `doxygen` installed (verified with a scratchpad copy: 0 warnings). |
+| 2026-10-12 | Claude | 6.1 done (fresh clone: make, make test 193/193, make docs 0 warnings, Lean OK). 6.2: `make dist BITSID=<id>` builds the zip; unzip+rebuild verified with BITSID=TEST. Needs the real BITS ID, so not ticked. 6.3 / 6.4 are manual. |
 | | | |

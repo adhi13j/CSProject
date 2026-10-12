@@ -16,7 +16,7 @@ LIB_OBJS  := $(LIB_SRCS:.cpp=.o)
 # (stack/queue/recursion counters, src/instrument.h). The normal build has no counters.
 BENCH_OBJS := $(patsubst src/%.cpp,bench/obj/%.o,$(LIB_SRCS))
 
-.PHONY: all test bench docs clean
+.PHONY: all test bench docs dist clean
 
 all: logic_a1
 
@@ -50,6 +50,17 @@ bench/bench.o: bench/bench.cpp
 
 docs:
 	doxygen docs/Doxyfile
+
+# Submission archive (SPEC section 11):  make dist BITSID=<your BITS ID>
+# Built from the working tree on purpose: docs/html is git-ignored but must be shipped.
+# No binaries, no .o files, no raw SAT files (data/README.md lists them), no .lake.
+BITSID ?= BITSID
+dist: docs
+	rm -f $(BITSID)_LOGIC_A1.zip
+	zip -rq $(BITSID)_LOGIC_A1.zip include src tests bench docs lean data/README.md Makefile README.md SPEC.md \
+	    -x '*.o' '*.d' 'tests/run_tests' 'bench/bench' 'bench/crash_search' 'bench/obj/*' \
+	       'tests/data/_scratch.cnf' 'lean/.lake/*' 'lean/.lake' '*/.lake/*'
+	@echo "created $(BITSID)_LOGIC_A1.zip"
 
 %.o: %.cpp
 	$(CXX) $(BASEFLAGS) $(CXXFLAGS) -c $< -o $@
