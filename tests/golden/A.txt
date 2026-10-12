@@ -1,0 +1,8 @@
+input: ((p+(~q))>r)
+prefix: > + p ~ q r
+inorder: ((p+(~q))>r)
+preorder: > + p ~ q r
+postorder: p q ~ + r >
+height: 3
+atoms: p q r
+table: 01110101

@@ -1,6 +1,7 @@
 # SPEC.md — CS F214 Logic in CS, Assignment 1
 
-**Status:** v1.0 (draft — confirm open questions in §12 with the group)
+**Status:** v1.0 — the answers assumed in §12 apply (and are encoded in Appendix A) until the group confirms or changes them.
+**Assignment:** CS F214 Assignment 1 PDF — 30 marks, 10% weightage, groups of at most 5, Part A in C or C++ only.
 **Source of truth:** If code and this spec disagree, the code is wrong. Changes to this spec are made by the group, committed separately, and announced.
 
 ---
@@ -17,6 +18,8 @@
 | A | T6 Analysis, Doxygen, HTML report | 5 | §8, §9 |
 | B | T1 Lean proofs of Examples 1.13–1.18 | 5 | §10 |
 | B | T2 Live sequent proof at demo | 7 | §10 |
+
+Total: 18 (A) + 12 (B) = 30. The demo is mandatory: absence means zero credit (assignment PDF, instruction 6).
 
 Language for Part A: **C++17**, standard library only. Must compile with `g++ -std=c++17 -Wall -Wextra -O2` with zero warnings.
 
@@ -105,7 +108,7 @@ std::vector<std::string> infixToPrefix(const std::vector<std::string>& infixToke
 std::string joinTokens(const std::vector<std::string>& tokens, const std::string& sep = " ");
 ```
 
-**Algorithm (required, matches course reference):**
+**Algorithm (required, matches course reference — http://scanftree.com/Data_Structure/infix-to-prefix):**
 
 1. Reverse the token list.
 2. Swap every `(` with `)` and vice versa.
@@ -155,7 +158,7 @@ std::string postorderIter(const Node* root);
 
 **Iterative algorithms (required approach)**
 
-- In-order: explicit stack; push-left-chain, pop, visit, go right. Parentheses are emitted via a stack of `(node, state)` frames, where state ∈ {OPEN, MIDDLE, CLOSE}.
+- In-order: explicit stack of `(node, state)` frames, state ∈ {OPEN, MIDDLE, CLOSE}. OPEN emits `(` (binary/NOT) and pushes the node as MIDDLE followed by its left child (binary only); MIDDLE emits the operator and pushes CLOSE followed by the right child; CLOSE emits `)`. ATOM emits its name. A plain push-left-chain loop is *not* used: a NOT node has `left == nullptr` and its operand in `right`, so it needs the frame form.
 - Pre-order: stack; pop+visit, push right, push left.
 - Post-order: two stacks, or one stack + last-visited pointer (document which).
 
@@ -166,6 +169,7 @@ std::string postorderIter(const Node* root);
 - `inorder(t) == canonical(s)`. For fully parenthesized input with `(~X)` negations, `canonical(s)` is `s` with whitespace removed.
 
 **Complexity:** O(n) time. Recursive: O(h) call stack. Iterative: O(h) heap stack.
+The recursive versions must append to one shared output buffer through a private helper (the public signature is unchanged). Concatenating returned `std::string`s at every level would cost O(n·h), i.e. O(n²) on a left-deep tree.
 
 ### 4.4 Task 4 — Height
 
@@ -193,11 +197,11 @@ std::string truthTableColumn(const Node* root, int maxAtoms = 20); // results on
 
 **Semantics:** `~`, `*`, `+` standard. `a > b` ≡ `(!a) || b`.
 
-**Natural sort for atoms:** compare by alphabetic prefix, then by numeric value of the trailing digits, then lexicographically. So `x2 < x10`.
+**Natural sort for atoms:** split each name into a prefix and a maximal trailing run of digits (possibly empty). Compare the prefixes (case-sensitive, by `char` value); then the digit runs as unsigned integers (an empty run sorts before any number; compare by length after stripping leading zeros, then lexicographically, so there is no overflow); then the whole names lexicographically. So `x < x1 < x2 < x10`, and `x01` sorts after `x1`.
 
 **Truth table**
 
-- k = `collectAtoms(root).size()`. If k > `maxAtoms` → print a message that the table has 2^k rows and is not generated (§8.4 explains why), and return.
+- k = `collectAtoms(root).size()`. If k > `maxAtoms` → write `Truth table skipped: k=<k> atoms, 2^<k> rows (limit <maxAtoms>)` to `out` (§8.4 explains why) and return. `truthTableColumn` returns an empty string in that case.
 - Row i, for i = 0 … 2^k − 1: atom j (0-based in sorted order) has value `(i >> (k-1-j)) & 1`. So the **first atom is the most significant bit** and row 0 is all-false.
 - Output format, columns separated by a single space:
 
@@ -214,6 +218,8 @@ p q r | F
 
 ### 4.6 DIMACS CNF input
 
+Format reference (from the assignment PDF): https://jix.github.io/varisat/manual/0.2.0/formats/dimacs.html
+
 ```cpp
 struct CNF { int numVars = 0; int numClauses = 0; std::vector<std::vector<int>> clauses; };
 enum class TreeShape { LEFT_DEEP, BALANCED };
@@ -228,7 +234,8 @@ std::string cnfToInfix(const CNF& cnf, TreeShape shape);
 - Header `p cnf <vars> <clauses>` → fill `numVars`, `numClauses`.
 - Clauses are whitespace-separated integers terminated by `0`. A clause may span lines, and several clauses may share a line.
 - A line starting with `%` ends the input (some SATLIB/SAT 2002 files have this).
-- If the clause count read ≠ the header count → print a warning to `stderr`, but continue.
+- If the clause count read ≠ the header count → print a warning to `stderr`, but continue. `CNF::numClauses` holds the count actually read.
+- A missing `p cnf` header before the first clause is an error (§7).
 
 **Conversion rules**
 
@@ -252,7 +259,11 @@ Binary: `./logic_a1`
 ```
 
 - Default `--task all` prints labelled sections: `TOKENS`, `PREFIX`, `INORDER (rec/iter)`, `PREORDER (rec/iter)`, `POSTORDER (rec/iter)`, `HEIGHT (rec/iter)`, `EVAL` (if `--assign` is given), `TRUTH TABLE` (if `--table` is given).
+- `--task n` prints only the sections of that task: 1 = `TOKENS`, `PREFIX`; 2 = `TREE` (node count); 3 = the three traversals; 4 = `HEIGHT`; 5 = `EVAL` and `TRUTH TABLE`. `--assign` and `--table` have no effect for tasks 1–4.
+- `--formula` and `--cnf` are mutually exclusive; giving both, or neither, is an error.
+- `--assign` is a comma-separated list of `atom=0|1` (whitespace tolerated) and must cover every atom of the formula, otherwise `evaluate*` throws (§7).
 - For `--cnf`, traversal strings longer than 200 characters are truncated in the display as `<first 100>…<last 100> (N chars)`.
+- A recursive variant is run only if the tree height is ≤ `kRecursionLimit` (10 000). Otherwise its line prints `SKIPPED (height <h> > 10000)` and only the iterative result is shown. This keeps the CLI from crashing on left-deep CNF trees; the deliberate crash experiments live in `bench` (§8.2), which uses `fork()`.
 - Exit code 0 on success, 1 on any error.
 
 ---
@@ -271,7 +282,8 @@ Binary: `./logic_a1`
 
 Input is assumed well-formed, but failures must be loud, never silent:
 
-- Throw `std::invalid_argument` with a clear message for: an illegal character, unbalanced parentheses, an operator missing operands, leftover nodes after tree building, an atom missing from the `Assignment`, or a malformed DIMACS file.
+- Throw `std::invalid_argument` with a clear message for: an illegal character, unbalanced parentheses, an operator missing operands, two adjacent operands with no operator (e.g. `p q`), leftover nodes after tree building, an atom missing from the `Assignment`, or a malformed DIMACS file (cannot be opened, missing `p cnf` header, non-integer token, empty clause or formula).
+- Command-line errors (unknown flag, bad `--assign` syntax, `--formula` together with `--cnf`) are reported the same way.
 - `main` catches the exception, prints `Error: <message>` to `stderr`, and exits 1.
 
 ---
@@ -282,7 +294,7 @@ Input is assumed well-formed, but failures must be loud, never silent:
 
 1. **Golden formulas** (Appendix A).
 2. **Synthetic scaling:** randomly generated formulas of n = 10, 100, 1k, 10k, 100k, 1M nodes, plus left-deep chains of the same sizes.
-3. **SAT 2002 benchmark:** at least 6 `.cnf` files spanning small → large clause counts, each built both LEFT_DEEP and BALANCED. Record file name, vars, clauses, nodes, and height.
+3. **SAT 2002 benchmark** (from https://satcompetition.github.io/): at least 6 `.cnf` files spanning small → large clause counts, each built both LEFT_DEEP and BALANCED. Record file name, vars, clauses, nodes, and height.
 
 ### 8.2 Metrics per function
 
@@ -334,7 +346,8 @@ Input is assumed well-formed, but failures must be loud, never silent:
 
 ## 11. Submission
 
-- File name: `<BITSID>_LOGIC_A1.zip`. One submission per group, by Oct 15 midnight.
+- File name: `<BITSID>_LOGIC_A1.zip`, where `<BITSID>` is the BITS ID of the member who submits. One submission per group (max 5 students), by Oct 15 midnight. The demo takes place right after submission and every member must attend.
+- Build the zip from the working tree, not with `git archive`: `docs/html/` is git-ignored but must be included.
 - Contents: `include/ src/ tests/ bench/ docs/ (incl. generated html) lean/ Makefile README.md SPEC.md`.
 - Exclude: binaries, `.o` files, the raw SAT benchmark archive (list the files used in the README instead), and `.lake/`.
 
@@ -343,9 +356,21 @@ Input is assumed well-formed, but failures must be loud, never silent:
 ## 12. Open questions (resolve and record answers here)
 
 1. Is `~p` (without parentheses) valid input, or always `(~p)`? → *Current spec: accept both, and emit `(~p)`.*
-2. Height convention: does a leaf have height 0 or 1? → *Current spec: 0.* Confirm with the instructor, and if it's 1, change only `heightRec`/`heightIter` + tests.
+2. Height convention: does a leaf have height 0 or 1? → *Current spec: 0.* Confirm with the instructor. If it's 1, change `heightRec`/`heightIter`, the `height:` line of every golden file in Appendix A, and the null/leaf values in §4.4 and CLAUDE.md.
 3. Truth table format expected by the evaluator (0/1 vs T/F). → *Current spec: 0/1.*
-4. Is the use of AI coding tools permitted? Check before the demo.
+4. Is the use of AI coding tools permitted? The assignment PDF only says "discuss with friends but refrain from copying the code" and is silent on AI tools. Ask the instructor before the demo.
+5. Which textbook edition are Examples 1.13–1.18 from? The PDF just says "the textbook". Record the edition and the exact sequents here before `lean/Examples.lean` is written.
+6. How does `bench` read peak stack/queue sizes (`aux_peak`) without changing the signatures in `formula.h`? → *Proposal:* a global counter in a private header, compiled in only with `-DBENCH_INSTRUMENT`.
+7. The PDF header says the due date is 15 October **2025**, but TODO.md and §11 assume Thu 15 Oct 2026. Confirm the deadline on the LMS.
+
+## Answers : 
+1. current implementation is good
+2.
+3. 0/1 should be used
+4. AI is permitted
+5. 
+6.
+7.
 
 ---
 

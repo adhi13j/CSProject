@@ -1,0 +1,8 @@
+input: (~(~p))
+prefix: ~ ~ p
+inorder: (~(~p))
+preorder: ~ ~ p
+postorder: p ~ ~
+height: 2
+atoms: p
+table: 01

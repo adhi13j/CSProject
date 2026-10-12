@@ -1,0 +1,8 @@
+input: ( p * q )
+prefix: * p q
+inorder: (p*q)
+preorder: * p q
+postorder: p q *
+height: 1
+atoms: p q
+table: 0001

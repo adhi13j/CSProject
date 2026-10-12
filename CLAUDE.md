@@ -11,7 +11,7 @@ CS F214 Assignment 1: propositional-logic parse trees in C++ (Part A), plus Lean
 - Work on ONE TODO item at a time. When it's done, run `make test`, show the result, and suggest a commit message.
 - Every function needs a Doxygen block: `@brief @param @return @throws`, and `@note Complexity: time / space`.
 - Comment the *why* in the algorithm code (e.g. why the pop rule is ≥ for right-associative operators in the reversed scan).
-- `freeTree`, and any function expected to run on CNF-sized trees, must be iterative (deep left-deep trees overflow the call stack).
+- `freeTree`, and any function expected to run on CNF-sized trees, must be iterative (deep left-deep trees overflow the call stack). The `*Rec` functions are deliberately recursive (SPEC §4); the CLI skips them above `kRecursionLimit` and `bench` runs them in a `fork()`ed child.
 - Tokens are strings; never reverse or index characters of the formula directly.
 
 ## Conventions (from SPEC)

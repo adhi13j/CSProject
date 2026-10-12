@@ -28,7 +28,7 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 - [ ] **1.3** (C) `tests/golden/A.txt … I.txt` copied from SPEC Appendix A. **Each person re-derives one case by hand** to verify it.
 - [ ] **1.4** (C) `tests/run_tests.cpp`: loads every golden file and checks every key; also checks the invariants (rec == iter, preorder == prefix, heightRec == heightIter, evaluateRec == evaluateIter on all rows). Prints PASS/FAIL per check, and exits non-zero on failure.
 - [ ] **1.5** (A) `Makefile` with targets `all test bench docs clean` (SPEC §6). Build with stub implementations that throw `"not implemented"`.
-  *Accept:* `make test` builds and fails cleanly (red is expected now).
+  *Accept:* `make test` builds and fails cleanly (red is expected now). Keep the base flags in a separate variable (e.g. `BASEFLAGS`) that is always used alongside `CXXFLAGS`: a command-line `CXXFLAGS+=...` replaces the Makefile's own value, so the ASan run would otherwise drop `-std=c++17 -Wall -Wextra -O2`.
 
 ## Phase 2 — Implementation (Tue, in parallel)
 
