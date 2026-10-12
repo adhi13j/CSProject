@@ -5,3 +5,6 @@ bench/bench
 docs/html/
 .lake/
 data/*.cnf
+*.d
+*.zip
+tests/data/_scratch.cnf
