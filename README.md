@@ -9,6 +9,8 @@ tables. Part B proves Examples 1.13–1.18 in Lean 4.
 
 `SPEC.md` is the source of truth for every behaviour described here.
 
+**New here? Read `GUIDE.md`**: install, first run, command-line cookbook, tests, benchmarks, Lean, daily workflow, troubleshooting and the demo cheat sheet.
+
 ## Team
 
 | Name | BITS ID |
