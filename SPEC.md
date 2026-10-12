@@ -365,12 +365,12 @@ Input is assumed well-formed, but failures must be loud, never silent:
 
 ## Answers : 
 1. current implementation is good
-2.
+2. current spec is good
 3. 0/1 should be used
 4. AI is permitted
-5. 
-6.
-7.
+5. Examples should self made or extracted from a          questions file
+6. proposal is good
+7. submission is on 15 Oct 2026
 
 ---
 
