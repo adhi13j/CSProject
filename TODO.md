@@ -17,44 +17,44 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 
 - [ ] **0.1** Every member: install `g++`, `make`, `git`, `doxygen`, VS Code + Lean 4 extension (elan). Check `g++ --version`, `doxygen --version`.
 - [ ] **0.2** (A) Create a GitHub/GitLab private repo, add everyone, and push the skeleton from GETTING_STARTED.md.
-- [ ] **0.3** (A) Add `SPEC.md`, `TODO.md`, `CLAUDE.md`, `.gitignore` (`*.o`, `logic_a1`, `tests/run_tests`, `bench/bench`, `docs/html/`, `.lake/`, `data/*.cnf`).
-- [ ] **0.4** (B) Download the SAT 2002 benchmark → `data/`. Pick ≥6 files of increasing size and list them in `data/README.md`, with vars/clauses from each header.
+- [x] **0.3** (A) Add `SPEC.md`, `TODO.md`, `CLAUDE.md`, `.gitignore` (`*.o`, `logic_a1`, `tests/run_tests`, `bench/bench`, `docs/html/`, `.lake/`, `data/*.cnf`).
+- [x] **0.4** (B) Download the SAT 2002 benchmark → `data/`. Pick ≥6 files of increasing size and list them in `data/README.md`, with vars/clauses from each header.
 
 ## Phase 1 — Contract and tests first (everyone, Mon night)
 
-- [ ] **1.1** Group read-through of SPEC.md. Resolve §12 open questions, or record "assumed".
-- [ ] **1.2** (A) `include/formula.h`: all types + signatures from SPEC §3–4, with full Doxygen blocks and **no implementations**.
+- [x] **1.1** Group read-through of SPEC.md. Resolve §12 open questions, or record "assumed".
+- [x] **1.2** (A) `include/formula.h`: all types + signatures from SPEC §3–4, with full Doxygen blocks and **no implementations**.
   *Accept:* header compiles standalone (`g++ -std=c++17 -fsyntax-only include/formula.h`).
-- [ ] **1.3** (C) `tests/golden/A.txt … I.txt` copied from SPEC Appendix A. **Each person re-derives one case by hand** to verify it.
-- [ ] **1.4** (C) `tests/run_tests.cpp`: loads every golden file and checks every key; also checks the invariants (rec == iter, preorder == prefix, heightRec == heightIter, evaluateRec == evaluateIter on all rows). Prints PASS/FAIL per check, and exits non-zero on failure.
-- [ ] **1.5** (A) `Makefile` with targets `all test bench docs clean` (SPEC §6). Build with stub implementations that throw `"not implemented"`.
+- [x] **1.3** (C) `tests/golden/A.txt … I.txt` copied from SPEC Appendix A. **Each person re-derives one case by hand** to verify it.
+- [x] **1.4** (C) `tests/run_tests.cpp`: loads every golden file and checks every key; also checks the invariants (rec == iter, preorder == prefix, heightRec == heightIter, evaluateRec == evaluateIter on all rows). Prints PASS/FAIL per check, and exits non-zero on failure.
+- [x] **1.5** (A) `Makefile` with targets `all test bench docs clean` (SPEC §6). Build with stub implementations that throw `"not implemented"`.
   *Accept:* `make test` builds and fails cleanly (red is expected now). Keep the base flags in a separate variable (e.g. `BASEFLAGS`) that is always used alongside `CXXFLAGS`: a command-line `CXXFLAGS+=...` replaces the Makefile's own value, so the ASan run would otherwise drop `-std=c++17 -Wall -Wextra -O2`.
 
 ## Phase 2 — Implementation (Tue, in parallel)
 
-- [ ] **2.1** (A) `src/tokenizer.cpp` — `tokenize`, `joinTokens`.
+- [x] **2.1** (A) `src/tokenizer.cpp` — `tokenize`, `joinTokens`.
   *Accept:* tokens correct for all golden inputs; multi-character atoms intact; illegal char → `invalid_argument`.
-- [ ] **2.2** (A) `src/infix_prefix.cpp` — T1, using the reverse method with the ≥/> pop rule (SPEC §4.1).
+- [x] **2.2** (A) `src/infix_prefix.cpp` — T1, using the reverse method with the ≥/> pop rule (SPEC §4.1).
   *Accept:* `prefix:` matches for A–I. **H must give `> p > q r`.**
-- [ ] **2.3** (B) `src/tree_build.cpp` — T2 `prefixToTree` + iterative `freeTree`.
+- [x] **2.3** (B) `src/tree_build.cpp` — T2 `prefixToTree` + iterative `freeTree`.
   *Accept:* node invariants hold (NOT child on the right); bad prefix → exception; no leaks (`valgrind` or `-fsanitize=address`).
-- [ ] **2.4** (B) `src/cnf_reader.cpp` — `readDimacs`, `cnfToInfix` (LEFT_DEEP + BALANCED).
+- [x] **2.4** (B) `src/cnf_reader.cpp` — `readDimacs`, `cnfToInfix` (LEFT_DEEP + BALANCED).
   *Accept:* `tests/data/tiny.cnf` → case E string; handles `c`, `%`, multi-line clauses; balanced height ≈ log₂(#clauses) + clause depth.
-- [ ] **2.5** (C) `src/traversal.cpp` — T3, all 6 functions.
+- [x] **2.5** (C) `src/traversal.cpp` — T3, all 6 functions.
   *Accept:* `inorder/preorder/postorder` match; rec == iter on all cases.
-- [ ] **2.6** (D) `src/height.cpp` — T4 rec + BFS.
+- [x] **2.6** (D) `src/height.cpp` — T4 rec + BFS.
   *Accept:* `height:` matches; rec == iter.
-- [ ] **2.7** (D) `src/eval.cpp` — T5 `collectAtoms` (natural sort), `evaluateRec`, `evaluateIter`, `printTruthTable`, `truthTableColumn`.
+- [x] **2.7** (D) `src/eval.cpp` — T5 `collectAtoms` (natural sort), `evaluateRec`, `evaluateIter`, `printTruthTable`, `truthTableColumn`.
   *Accept:* `atoms:` and `table:` match; case I orders `x2 x10`; k > maxAtoms prints the refusal message.
-- [ ] **2.8** (A) `src/main.cpp` — CLI per SPEC §5.
+- [x] **2.8** (A) `src/main.cpp` — CLI per SPEC §5.
   *Accept:* `./logic_a1 --formula "((p+(~q))>r)" --table` prints all sections; `--cnf tests/data/tiny.cnf` works.
 
 ## Phase 3 — Integration and stress (Wed morning)
 
-- [ ] **3.1** (C) `make test` is fully green with `-Wall -Wextra` and zero warnings.
-- [ ] **3.2** (B) Run every SAT file in `data/` through the CLI (LEFT_DEEP and BALANCED). Note which recursive functions crash, and at what height.
-- [ ] **3.3** (D) Add a random formula generator (`tests/gen.cpp` or in bench) and a property test: for 1000 random formulas, generated in canonical form (SPEC §4.3), `inorder(prefixToTree(infixToPrefix(tokenize(s)))) == s`, and rec == iter everywhere.
-- [ ] **3.4** (A) Run AddressSanitizer: `make CXXFLAGS+="-fsanitize=address -g" test` must be clean.
+- [x] **3.1** (C) `make test` is fully green with `-Wall -Wextra` and zero warnings.
+- [x] **3.2** (B) Run every SAT file in `data/` through the CLI (LEFT_DEEP and BALANCED). Note which recursive functions crash, and at what height.
+- [x] **3.3** (D) Add a random formula generator (`tests/gen.cpp` or in bench) and a property test: for 1000 random formulas, generated in canonical form (SPEC §4.3), `inorder(prefixToTree(infixToPrefix(tokenize(s)))) == s`, and rec == iter everywhere.
+- [x] **3.4** (A) Run AddressSanitizer: `make CXXFLAGS+="-fsanitize=address -g" test` must be clean.
 
 ## Phase 4 — Analysis and docs (Wed → Thu)
 
