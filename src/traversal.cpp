@@ -12,6 +12,7 @@
  * @authors Replace with group member names.
  */
 #include "formula.h"
+#include "instrument.h"
 
 #include <utility>
 
@@ -21,7 +22,6 @@ namespace {
  * @brief Append `token` to `out`, preceded by a single space unless `out` is empty.
  * @param out   Output buffer.
  * @param token Text to append.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(|token|) amortised / O(1) extra space.
  */
@@ -36,11 +36,11 @@ void emitSpaced(std::string& out, const std::string& token) {
  * @brief Recursive helper for inorderRec.
  * @param n   Current node (may be nullptr).
  * @param out Output buffer, appended to.
- * @return Nothing.
  * @throws Nothing (but may exhaust the call stack on very deep trees; that is the point of the iterative twin).
  * @note Complexity: O(subtree size) time / O(h) call stack.
  */
 void inorderAppend(const Node* n, std::string& out) {
+    AUX_ENTER();
     if (n == nullptr) {
         return;
     }
@@ -62,6 +62,7 @@ void inorderAppend(const Node* n, std::string& out) {
 
 /** @brief Recursive helper for preorderRec: node, left, right. @note O(subtree) time / O(h) stack. */
 void preorderAppend(const Node* n, std::string& out) {
+    AUX_ENTER();
     if (n == nullptr) {
         return;
     }
@@ -72,6 +73,7 @@ void preorderAppend(const Node* n, std::string& out) {
 
 /** @brief Recursive helper for postorderRec: left, right, node. @note O(subtree) time / O(h) stack. */
 void postorderAppend(const Node* n, std::string& out) {
+    AUX_ENTER();
     if (n == nullptr) {
         return;
     }
@@ -85,7 +87,6 @@ enum class State { OPEN, MIDDLE, CLOSE };
 
 } // namespace
 
-/** @copydoc inorderRec */
 std::string inorderRec(const Node* root) {
     std::string out;
     inorderAppend(root, out);
@@ -93,8 +94,6 @@ std::string inorderRec(const Node* root) {
 }
 
 /**
- * @copydoc inorderIter
- *
  * @details A plain "push the left chain, pop, visit, go right" loop is not
  * enough: parentheses must be printed before the left subtree and after the right
  * one, and a NOT node has no left child at all (its operand is in `right`). So each
@@ -110,6 +109,7 @@ std::string inorderIter(const Node* root) {
     std::vector<std::pair<const Node*, State>> stack;
     stack.emplace_back(root, State::OPEN);
     while (!stack.empty()) {
+        AUX_NOTE(stack.size());
         const std::pair<const Node*, State> frame = stack.back();
         stack.pop_back();
         const Node* n = frame.first;
@@ -138,7 +138,6 @@ std::string inorderIter(const Node* root) {
     return out;
 }
 
-/** @copydoc preorderRec */
 std::string preorderRec(const Node* root) {
     std::string out;
     preorderAppend(root, out);
@@ -146,8 +145,6 @@ std::string preorderRec(const Node* root) {
 }
 
 /**
- * @copydoc preorderIter
- *
  * @details The right child is pushed before the left one so that the left child
  * is popped (and therefore visited) first.
  */
@@ -159,6 +156,7 @@ std::string preorderIter(const Node* root) {
     std::vector<const Node*> stack;
     stack.push_back(root);
     while (!stack.empty()) {
+        AUX_NOTE(stack.size());
         const Node* n = stack.back();
         stack.pop_back();
         emitSpaced(out, n->value);
@@ -172,7 +170,6 @@ std::string preorderIter(const Node* root) {
     return out;
 }
 
-/** @copydoc postorderRec */
 std::string postorderRec(const Node* root) {
     std::string out;
     postorderAppend(root, out);
@@ -180,8 +177,6 @@ std::string postorderRec(const Node* root) {
 }
 
 /**
- * @copydoc postorderIter
- *
  * @details Version used: ONE stack plus a last-visited pointer. A node may be
  * visited only after its right subtree is done; `last` tells us whether we are
  * coming back up from that right subtree (visit now) or have not been there yet
@@ -196,6 +191,7 @@ std::string postorderIter(const Node* root) {
     while (cur != nullptr || !stack.empty()) {
         if (cur != nullptr) {
             stack.push_back(cur);
+            AUX_NOTE(stack.size());
             cur = cur->left;          // null for ATOM and NOT: falls through to the else branch
         } else {
             const Node* top = stack.back();

@@ -10,6 +10,7 @@
  * @authors Replace with group member names.
  */
 #include "formula.h"
+#include "instrument.h"
 
 #include <algorithm>
 #include <ostream>
@@ -124,7 +125,6 @@ bool applyBinary(NodeType type, bool l, bool r) {
  * @param root  Formula root.
  * @param atoms Sorted atoms of the formula.
  * @param visit Called once per row, in row order, with the row's input bits and result.
- * @return Nothing.
  * @throws std::invalid_argument from evaluateIter (cannot happen: every atom is assigned).
  * @note Complexity: O(2^k * n) time / O(k) space.
  */
@@ -151,8 +151,6 @@ constexpr int kHardAtomLimit = 62;
 } // namespace
 
 /**
- * @copydoc collectAtoms
- *
  * @details Uses an explicit stack (not recursion) so it also works on the deepest trees.
  */
 std::vector<std::string> collectAtoms(const Node* root) {
@@ -162,6 +160,7 @@ std::vector<std::string> collectAtoms(const Node* root) {
         stack.push_back(root);
     }
     while (!stack.empty()) {
+        AUX_NOTE(stack.size());
         const Node* n = stack.back();
         stack.pop_back();
         if (n->type == NodeType::ATOM) {
@@ -179,8 +178,8 @@ std::vector<std::string> collectAtoms(const Node* root) {
     return atoms;
 }
 
-/** @copydoc evaluateRec */
 bool evaluateRec(const Node* root, const Assignment& a) {
+    AUX_ENTER();
     if (root == nullptr) {
         throw std::invalid_argument("cannot evaluate an empty tree");
     }
@@ -198,8 +197,6 @@ bool evaluateRec(const Node* root, const Assignment& a) {
 }
 
 /**
- * @copydoc evaluateIter
- *
  * @details Post-order with one node stack and a last-visited pointer (the same
  * scheme as postorderIter). A value stack holds finished subtrees: when an
  * operator is visited its operand values are the top entries, the right operand
@@ -216,6 +213,7 @@ bool evaluateIter(const Node* root, const Assignment& a) {
     while (cur != nullptr || !stack.empty()) {
         if (cur != nullptr) {
             stack.push_back(cur);
+            AUX_NOTE(stack.size());
             cur = cur->left;
         } else {
             const Node* top = stack.back();
@@ -224,6 +222,7 @@ bool evaluateIter(const Node* root, const Assignment& a) {
             } else {
                 if (top->type == NodeType::ATOM) {
                     values.push_back(lookup(top->value, a) ? 1 : 0);
+                    AUX_NOTE(values.size());
                 } else if (top->type == NodeType::NOT) {
                     values.back() = values.back() ? 0 : 1;
                 } else {
@@ -240,7 +239,6 @@ bool evaluateIter(const Node* root, const Assignment& a) {
     return values.back() != 0;
 }
 
-/** @copydoc printTruthTable */
 void printTruthTable(const Node* root, std::ostream& out, int maxAtoms) {
     const std::vector<std::string> atoms = collectAtoms(root);
     const int k = static_cast<int>(atoms.size());
@@ -261,7 +259,6 @@ void printTruthTable(const Node* root, std::ostream& out, int maxAtoms) {
     });
 }
 
-/** @copydoc truthTableColumn */
 std::string truthTableColumn(const Node* root, int maxAtoms) {
     const std::vector<std::string> atoms = collectAtoms(root);
     if (static_cast<int>(atoms.size()) > std::min(maxAtoms, kHardAtomLimit)) {

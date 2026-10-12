@@ -7,12 +7,13 @@
  * @authors Replace with group member names.
  */
 #include "formula.h"
+#include "instrument.h"
 
 #include <algorithm>
 #include <queue>
 
-/** @copydoc heightRec */
 int heightRec(const Node* root) {
+    AUX_ENTER();
     if (root == nullptr) {
         return -1;
     }
@@ -20,8 +21,6 @@ int heightRec(const Node* root) {
 }
 
 /**
- * @copydoc heightIter
- *
  * @details Level-order traversal: each pass of the outer loop empties exactly one
  * level of the queue. The number of levels minus one is the height, which also
  * gives -1 for the empty tree (0 levels).
@@ -35,6 +34,7 @@ int heightIter(const Node* root) {
     int levels = 0;
     while (!level.empty()) {
         ++levels;
+        AUX_NOTE(level.size());
         for (size_t remaining = level.size(); remaining > 0; --remaining) {
             const Node* n = level.front();
             level.pop();

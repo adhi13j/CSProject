@@ -30,7 +30,6 @@ int g_fail = 0;
  * @param name   Check label.
  * @param ok     Whether the check passed.
  * @param detail Extra text shown on failure (expected vs actual).
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(1).
  */
@@ -52,7 +51,6 @@ void report(const std::string& name, bool ok, const std::string& detail = "") {
  * @brief Run `body`, turning any exception into a failed check.
  * @param name Check label.
  * @param body Callable that returns true when the check passes.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: that of `body`.
  */
@@ -69,7 +67,6 @@ void check(const std::string& name, const std::function<bool()>& body) {
  * @param name     Check label.
  * @param actual   Value computed by the code under test (a lambda, so a throw is caught).
  * @param expected Value from the golden file.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: that of `actual`.
  */
@@ -86,7 +83,6 @@ void checkEq(const std::string& name, const std::function<std::string()>& actual
  * @brief Check that `body` throws std::invalid_argument.
  * @param name Check label.
  * @param body Callable expected to throw.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: that of `body`.
  */
@@ -200,7 +196,6 @@ std::string columnByBothEvaluators(const Node* root) {
 /**
  * @brief Run every check for one golden file.
  * @param path Golden file path.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(2^k * n) for the formula in the file.
  */
@@ -362,7 +357,6 @@ void runEvalUnits() {
  * @brief Write `text` to a scratch .cnf file, run `body` with its path, and remove the file.
  * @param text Contents of the file.
  * @param body Callable that receives the path.
- * @return Nothing.
  * @throws Whatever `body` throws (the file is removed first).
  * @note Complexity: O(size of text).
  */
@@ -521,7 +515,6 @@ void runDeepTreeStress() {
 
 /**
  * @brief Property test (TODO 3.3): random canonical formulas must survive the whole pipeline.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(sum of formula sizes).
  */

@@ -30,7 +30,6 @@ bool isSpace(char c) {
 
 } // namespace
 
-/** @copydoc tokenize */
 std::vector<std::string> tokenize(const std::string& infix) {
     std::vector<std::string> tokens;
     const size_t n = infix.size();
@@ -59,7 +58,6 @@ std::vector<std::string> tokenize(const std::string& infix) {
     return tokens;
 }
 
-/** @copydoc joinTokens */
 std::string joinTokens(const std::vector<std::string>& tokens, const std::string& sep) {
     std::string out;
     for (size_t i = 0; i < tokens.size(); ++i) {

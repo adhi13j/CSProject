@@ -5,6 +5,7 @@
  * @authors Replace with group member names.
  */
 #include "formula.h"
+#include "instrument.h"
 
 #include <stdexcept>
 
@@ -37,7 +38,6 @@ bool isAtom(const std::string& t) {
 /**
  * @brief Free every tree whose root is in `roots`, then clear the vector.
  * @param roots Roots still owned by the caller.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(total nodes) time / O(h) space.
  */
@@ -51,8 +51,6 @@ void freeAll(std::vector<Node*>& roots) {
 } // namespace
 
 /**
- * @copydoc prefixToTree
- *
  * @details Scanning right to left means that when an operator is reached, its
  * operands are already built and sitting on the stack: the top is the FIRST
  * operand (it was pushed last), so it becomes `left`; the next one becomes `right`.
@@ -84,6 +82,7 @@ Node* prefixToTree(const std::vector<std::string>& prefixTokens) {
                 stack.push_back(new Node{type, t, first, second});
             } else if (isAtom(t)) {
                 stack.push_back(new Node{NodeType::ATOM, t, nullptr, nullptr});
+                AUX_NOTE(stack.size());
             } else {
                 throw std::invalid_argument("illegal prefix token '" + t + "' (token " + std::to_string(k) + ")");
             }
@@ -102,8 +101,6 @@ Node* prefixToTree(const std::vector<std::string>& prefixTokens) {
 }
 
 /**
- * @copydoc freeTree
- *
  * @details A recursive delete would use one call frame per tree level, and a
  * left-deep CNF tree has hundreds of thousands of levels. An explicit stack on
  * the heap has no such limit.
@@ -114,6 +111,7 @@ void freeTree(Node* root) {
         pending.push_back(root);
     }
     while (!pending.empty()) {
+        AUX_NOTE(pending.size());
         Node* n = pending.back();
         pending.pop_back();
         if (n->left != nullptr) {

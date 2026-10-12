@@ -116,7 +116,6 @@ Node* prefixToTree(const std::vector<std::string>& prefixTokens);
  * @brief Release a whole tree. Iterative, so deep trees cannot overflow the call stack.
  *
  * @param root Root of the tree; may be nullptr.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(n) time / O(h) space.
  */
@@ -271,7 +270,6 @@ bool evaluateIter(const Node* root, const Assignment& a);
  * @param root     Root of the tree.
  * @param out      Destination stream.
  * @param maxAtoms Largest atom count for which a table is generated.
- * @return Nothing.
  * @throws Nothing (evaluation cannot fail: every atom is assigned).
  * @note Complexity: O(2^k * n) time / O(h) extra space.
  */
@@ -313,13 +311,13 @@ CNF readDimacs(const std::string& path);
  * Literal `k` becomes `xk`, `-k` becomes `(~xk)`. A clause is its literals joined
  * by `+`, left-deep: `((a+b)+c)`; a one-literal clause is the literal itself.
  * The formula is the clauses joined by `*`: LEFT_DEEP gives `((C1*C2)*C3)...`
- * with height Theta(#clauses); BALANCED splits recursively at the midpoint.
+ * with height Theta(number of clauses); BALANCED splits recursively at the midpoint.
  *
  * @param cnf   The formula.
  * @param shape How the clauses are combined.
  * @return The infix string, ready for tokenize().
  * @throws std::invalid_argument for an empty clause or an empty formula.
- * @note Complexity: O(L) time / O(L) space (BALANCED recursion depth is O(log #clauses)).
+ * @note Complexity: O(L) time / O(L) space (BALANCED recursion depth is O(log(number of clauses))).
  */
 std::string cnfToInfix(const CNF& cnf, TreeShape shape);
 

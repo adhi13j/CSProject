@@ -14,7 +14,6 @@ namespace {
  * @param budget   Nodes to generate, at least 1.
  * @param numAtoms Size of the atom pool.
  * @param out      Output buffer, appended to.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(budget) time / O(depth) call stack; the depth is O(log budget)
  *       in expectation because the budget is split uniformly at random.

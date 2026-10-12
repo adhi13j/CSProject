@@ -7,6 +7,7 @@
  * @authors Replace with group member names.
  */
 #include "formula.h"
+#include "instrument.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -62,7 +63,6 @@ bool isRightAssoc(const std::string& op) {
  * assume a well-formed input.
  *
  * @param tokens The infix tokens.
- * @return Nothing.
  * @throws std::invalid_argument on unbalanced parentheses, an operator missing
  *         operands, two adjacent operands, or an empty formula.
  * @note Complexity: O(n) time / O(1) space.
@@ -112,8 +112,6 @@ void validate(const std::vector<std::string>& tokens) {
 } // namespace
 
 /**
- * @copydoc infixToPrefix
- *
  * @details Why reversal works: a prefix expression read right to left looks like
  * a postfix expression. So reverse the infix tokens (swapping `(` and `)` so
  * groups stay groups), run the usual infix -> postfix algorithm, and reverse the
@@ -139,6 +137,7 @@ std::vector<std::string> infixToPrefix(const std::vector<std::string>& infixToke
     for (const std::string& t : scan) {
         if (t == "(") {
             stack.push_back(t);
+            AUX_NOTE(stack.size());
         } else if (t == ")") {
             while (!stack.empty() && stack.back() != "(") {
                 output.push_back(stack.back());
@@ -161,6 +160,7 @@ std::vector<std::string> infixToPrefix(const std::vector<std::string>& infixToke
                 stack.pop_back();
             }
             stack.push_back(t);
+            AUX_NOTE(stack.size());
         } else {
             output.push_back(t);   // an atom goes straight to the output
         }

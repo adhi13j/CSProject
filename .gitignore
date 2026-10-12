@@ -8,3 +8,5 @@ data/*.cnf
 *.d
 *.zip
 tests/data/_scratch.cnf
+bench/crash_search
+bench/obj/

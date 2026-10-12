@@ -58,10 +58,10 @@ Thu         Phase 4–6   report, polish, rehearse, submit
 
 ## Phase 4 — Analysis and docs (Wed → Thu)
 
-- [ ] **4.1** (D) `bench/bench.cpp` per SPEC §8.2 (chrono median of 5, aux-peak counters, `ru_maxrss`, `fork()` for recursive crash detection) → `bench/results.csv` with the exact columns from §8.3.
-- [ ] **4.2** (D) Run the benchmarks on the synthetic sizes plus ≥6 SAT files, and commit `results.csv`.
-- [ ] **4.3** (C) `docs/Doxyfile` per SPEC §9; `make docs` produces `docs/html/index.html` with every function documented (no Doxygen warnings).
-- [ ] **4.4** (A) `README.md`: build, run, test, file map, team, and the SAT files used.
+- [x] **4.1** (D) `bench/bench.cpp` per SPEC §8.2 (chrono median of 5, aux-peak counters, `ru_maxrss`, `fork()` for recursive crash detection) → `bench/results.csv` with the exact columns from §8.3.
+- [x] **4.2** (D) Run the benchmarks on the synthetic sizes plus ≥6 SAT files, and commit `results.csv`.
+- [x] **4.3** (C) `docs/Doxyfile` per SPEC §9; `make docs` produces `docs/html/index.html` with every function documented (no Doxygen warnings).
+- [x] **4.4** (A) `README.md`: build, run, test, file map, team, and the SAT files used.
 - [ ] **4.5** (C+D) `docs/report/` — `index`, `algorithms` (worked trace of case A), `results` (tables + plots from the CSV), `analysis` (all of §8.4), `lean`, plus a shared `style.css`. Open each page on desktop and phone width.
 
 ## Phase 5 — Lean, Part B (E leads from Tue; everyone practices Thu)

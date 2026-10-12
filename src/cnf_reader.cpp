@@ -39,7 +39,6 @@ int parseInt(const std::string& tok, const char* what) {
  * @brief Append the infix text of a literal: `k` -> `xk`, `-k` -> `(~xk)`.
  * @param lit  A non-zero literal.
  * @param out  Output buffer, appended to.
- * @return Nothing.
  * @throws std::invalid_argument if `lit == 0`.
  * @note Complexity: O(digits) time / O(1) extra space.
  */
@@ -61,7 +60,6 @@ void appendLiteral(int lit, std::string& out) {
  * @brief Append one clause as a left-deep disjunction `((a+b)+c)`; a single literal stays bare.
  * @param clause The literals, non-empty.
  * @param out    Output buffer, appended to.
- * @return Nothing.
  * @throws std::invalid_argument for an empty clause.
  * @note Complexity: O(clause length) time / O(1) extra space.
  */
@@ -86,7 +84,6 @@ void appendClause(const std::vector<int>& clause, std::string& out) {
  * @param lo  First clause index.
  * @param hi  One past the last clause index; `hi > lo`.
  * @param out Output buffer, appended to.
- * @return Nothing.
  * @throws std::invalid_argument for an empty clause.
  * @note Complexity: O(literals in range) time / O(log(hi - lo)) call stack.
  */
@@ -107,7 +104,6 @@ void appendBalanced(const CNF& cnf, size_t lo, size_t hi, std::string& out) {
 
 } // namespace
 
-/** @copydoc readDimacs */
 CNF readDimacs(const std::string& path) {
     std::ifstream in(path);
     if (!in) {
@@ -176,7 +172,6 @@ CNF readDimacs(const std::string& path) {
     return cnf;
 }
 
-/** @copydoc cnfToInfix */
 std::string cnfToInfix(const CNF& cnf, TreeShape shape) {
     if (cnf.clauses.empty()) {
         throw std::invalid_argument("malformed CNF: empty formula (no clauses)");

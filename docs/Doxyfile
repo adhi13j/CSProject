@@ -1,0 +1,36 @@
+# Doxygen configuration (SPEC section 9). Run from the repository root: `make docs`
+# Only the keys that differ from the Doxygen defaults are listed.
+
+PROJECT_NAME           = "CS F214 Assignment 1 - Propositional Logic Parse Trees"
+PROJECT_BRIEF          = "Infix/prefix conversion, parse trees, traversals, height, evaluation and truth tables"
+OUTPUT_DIRECTORY       = docs
+HTML_OUTPUT            = html
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+
+INPUT                  = include src README.md
+FILE_PATTERNS          = *.h *.cpp *.md
+RECURSIVE              = NO
+USE_MDFILE_AS_MAINPAGE = README.md
+
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+EXTRACT_ANON_NSPACES   = YES
+EXTRACT_PRIVATE        = YES
+JAVADOC_AUTOBRIEF      = NO
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+GENERATE_TREEVIEW      = YES
+HTML_DYNAMIC_SECTIONS  = NO
+
+# Show problems instead of hiding them: TODO 4.3 wants a warning-free run.
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+
+# Needed so that src/instrument.h documents the instrumented variant.
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+PREDEFINED             = BENCH_INSTRUMENT

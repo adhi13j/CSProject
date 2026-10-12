@@ -47,7 +47,6 @@ struct TreeOwner {
 /**
  * @brief Print the usage text.
  * @param out Destination stream.
- * @return Nothing.
  * @throws Nothing.
  * @note Complexity: O(1).
  */
@@ -201,10 +200,10 @@ std::string display(const std::string& s, bool truncate) {
  * @param label     Section label, e.g. "INORDER".
  * @param rec       Recursive variant.
  * @param iter      Iterative variant.
+ * @param root      Tree root passed to both variants.
  * @param tallRoot  True if the tree is too tall for the recursive variant.
  * @param height    Tree height, shown in the SKIPPED message.
  * @param truncate  Whether long strings are shortened.
- * @return Nothing.
  * @throws Whatever `iter` throws.
  * @note Complexity: that of the two variants.
  */
@@ -222,7 +221,6 @@ void printPair(const std::string& label, std::string (*rec)(const Node*), std::s
  * @brief Run the whole pipeline for one formula and print the requested sections.
  * @param o     Parsed options.
  * @param infix The infix formula (typed by the user, or generated from the CNF).
- * @return Nothing.
  * @throws std::invalid_argument from any stage of the pipeline.
  * @note Complexity: O(n) for tasks 1-4; O(2^k * n) with --table.
  */
